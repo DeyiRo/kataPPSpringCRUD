@@ -1,4 +1,4 @@
-package web.userdao;
+package web.dao;
 
 import web.model.User;
 
@@ -11,7 +11,7 @@ public interface UserDAO {
 
     List<User> getAllUsers();
 
-    User getUserById(long id);
+    User findUserById(long id);
 
     void updateUserById(long id, User user);
 

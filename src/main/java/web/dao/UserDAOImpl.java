@@ -1,17 +1,14 @@
-package web.userdao;
+package web.dao;
 
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import web.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
 
 @Component
-@Transactional
 public class UserDAOImpl implements UserDAO {
 
     @PersistenceContext
@@ -19,31 +16,29 @@ public class UserDAOImpl implements UserDAO {
 
 
     @Override
-    @Transactional
     public void saveUser(User user) {
         entityManagerBean.persist(user);
         entityManagerBean.flush();
     }
 
     @Override
-    @Transactional
     public List<User> getAllUsers() {
         return entityManagerBean.createQuery("select u from User u", User.class).getResultList();
     }
 
     @Override
-    @Transactional
-    public User getUserById(long id) {
-        Query jpqlQuery = entityManagerBean.createQuery("SELECT u FROM User u WHERE u.id=:id");
-        jpqlQuery.setParameter("id", id);
-        User us = (User) jpqlQuery.getSingleResult();
-        return us;
+    public User findUserById(long id) {
+       return entityManagerBean.find(User.class, id);
+
+        //Query jpqlQuery = entityManagerBean.createQuery("SELECT u FROM User u WHERE u.id=:id");
+       // jpqlQuery.setParameter("id", id);
+       // User us = (User) jpqlQuery.getSingleResult();
+       // return us;
     }
 
     @Override
-    @Transactional
     public void updateUserById(long id, User user) {
-        User toUpdate = getUserById(id);
+        User toUpdate = findUserById(id);
         toUpdate.setName(user.getName());
         toUpdate.setProfession(user.getProfession());
         entityManagerBean.merge(toUpdate);
@@ -51,9 +46,8 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    @Transactional
     public void deleteUserById(long id) {
-        entityManagerBean.remove(getUserById(id));
+        entityManagerBean.remove(findUserById(id));
         entityManagerBean.flush();
     }
 
